@@ -5,5 +5,6 @@ from .pytestImports import *
 dataDirPath = 'src/data'
 
 
-def test_sign():
-	data = "hello world"
+def test_hello_world():
+	data = "hello world\n"
+
