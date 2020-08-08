@@ -1,1 +1,1 @@
-from ..code.stateless_gpg import verifySignature, sign
+from ..code.stateless_gpg import makeSignature, verifySignature

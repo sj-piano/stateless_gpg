@@ -1,5 +1,9 @@
 
 
+def makeSignature(privateKey, text):
+	pass
+
+
 
 
 def verifySignature(publicKey, signedText, signature): 
@@ -7,5 +11,4 @@ def verifySignature(publicKey, signedText, signature):
 
 
 
-def sign(privateKey, text):
-	pass
+
