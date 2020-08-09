@@ -1,1 +1,1 @@
-from ..code.stateless_gpg import makeSignature, verifySignature
+from ..code.stateless_gpg import WrapperClass as gpg
