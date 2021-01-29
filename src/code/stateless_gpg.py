@@ -109,6 +109,8 @@ def createTempDirectory():
 	return name
 
 
+
+
 def runLocalCmd(cmd):
 	proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	out, err = proc.communicate()
@@ -116,6 +118,8 @@ def runLocalCmd(cmd):
 		msg = 'COMMAND FAILED\n' + '$ ' + cmd + '\n' + err
 		stop(msg)
 	return out
+
+
 
 
 def stop(msg=''):
