@@ -1,8 +1,14 @@
+# Imports
 import os
-join = os.path.join
 import shutil
 import uuid
 import subprocess
+
+
+
+
+# Shortcuts
+join = os.path.join
 
 
 
