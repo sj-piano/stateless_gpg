@@ -36,32 +36,32 @@ class gpg(object):
 
 
   @staticmethod
-  def make_signature(privateKey, data):
-    gpgDirName = create_temp_directory()
-    dataDirName = create_temp_directory()
-    privateKeyFilePath = join(dataDirName, 'privateKey.txt')
-    with open(privateKeyFilePath, 'w') as f:
-      f.write(privateKey)
-    dataFilePath = join(dataDirName, 'data.txt')
-    with open(dataFilePath, 'w') as f:
+  def make_signature(private_key, data):
+    gpg_dir_name = create_temp_directory()
+    data_dir_name = create_temp_directory()
+    private_key_file = join(data_dir_name, 'private_key.txt')
+    with open(private_key_file, 'w') as f:
+      f.write(private_key)
+    data_file = join(data_dir_name, 'data.txt')
+    with open(data_file, 'w') as f:
       f.write(data)
-    permissionsCmd = 'chmod 700 {g}'.format(g=gpgDirName)
-    run_local_cmd(permissionsCmd)
-    importCmd = 'gpg --no-default-keyring --homedir {g} --import {p} 2>&1'.format(g=gpgDirName, p=privateKeyFilePath)
-    run_local_cmd(importCmd)
-    signatureFilePath = join(dataDirName, 'signature.txt')
-    signCmd = 'gpg --no-default-keyring --homedir {g} --output {s} --armor --detach-sign {d}'.format(g=gpgDirName, s=signatureFilePath, d=dataFilePath)
-    run_local_cmd(signCmd)
-    signature = open(signatureFilePath).read()
-    shutil.rmtree(gpgDirName)
-    shutil.rmtree(dataDirName)
+    permissions_cmd = 'chmod 700 {g}'.format(g=gpg_dir_name)
+    run_local_cmd(permissions_cmd)
+    import_cmd = 'gpg --no-default-keyring --homedir {g} --import {p} 2>&1'.format(g=gpg_dir_name, p=private_key_file)
+    run_local_cmd(import_cmd)
+    signature_file = join(data_dir_name, 'signature.txt')
+    sign_cmd = 'gpg --no-default-keyring --homedir {g} --output {s} --armor --detach-sign {d}'.format(g=gpg_dir_name, s=signature_file, d=data_file)
+    run_local_cmd(sign_cmd)
+    signature = open(signature_file).read()
+    shutil.rmtree(gpg_dir_name)
+    shutil.rmtree(data_dir_name)
     return signature
 
 
 
 
   @staticmethod
-  def verify_signature(publicKey, data, signature):
+  def verify_signature(public_key, data, signature):
     # Example GPG output: Bad signature
       # gpg: no valid OpenPGP data found.
       # [GNUPG:] NODATA 1
@@ -78,25 +78,25 @@ class gpg(object):
       # gpg: WARNING: This key is not certified with a trusted signature!
       # gpg:          There is no indication that the signature belongs to the owner.
       # Primary key fingerprint: F90F 2002 88C8 6F68 6D65  E58C 3375 AE2D 2553 44FE
-    gpgDirName = create_temp_directory()
-    dataDirName = create_temp_directory()
-    publicKeyFilePath = join(dataDirName, 'publicKey.txt')
-    with open(publicKeyFilePath, 'w') as f:
-      f.write(publicKey)
-    dataFilePath = join(dataDirName, 'data.txt')
-    with open(dataFilePath, 'w') as f:
+    gpg_dir_name = create_temp_directory()
+    data_dir_name = create_temp_directory()
+    public_key_file = join(data_dir_name, 'public_key.txt')
+    with open(public_key_file, 'w') as f:
+      f.write(public_key)
+    data_file = join(data_dir_name, 'data.txt')
+    with open(data_file, 'w') as f:
       f.write(data)
-    signatureFilePath = join(dataDirName, 'signature.txt')
-    with open(signatureFilePath, 'w') as f:
+    signature_file = join(data_dir_name, 'signature.txt')
+    with open(signature_file, 'w') as f:
       f.write(signature)
-    permissionsCmd = 'chmod 700 {g}'.format(g=gpgDirName)
-    run_local_cmd(permissionsCmd)
-    importCmd = 'gpg --no-default-keyring --homedir {g} --import {p} 2>&1'.format(g=gpgDirName, p=publicKeyFilePath)
-    run_local_cmd(importCmd)
-    verifyCmd = 'gpg --no-default-keyring --homedir {g} --status-fd 1 --verify {s} {d} 2>&1'.format(g=gpgDirName, s=signatureFilePath, d=dataFilePath)
-    output = run_local_cmd(verifyCmd)
-    shutil.rmtree(gpgDirName)
-    shutil.rmtree(dataDirName)
+    permissions_cmd = 'chmod 700 {g}'.format(g=gpg_dir_name)
+    run_local_cmd(permissions_cmd)
+    import_cmd = 'gpg --no-default-keyring --homedir {g} --import {p} 2>&1'.format(g=gpg_dir_name, p=public_key_file)
+    run_local_cmd(import_cmd)
+    verify_cmd = 'gpg --no-default-keyring --homedir {g} --status-fd 1 --verify {s} {d} 2>&1'.format(g=gpg_dir_name, s=signature_file, d=data_file)
+    output = run_local_cmd(verify_cmd)
+    shutil.rmtree(gpg_dir_name)
+    shutil.rmtree(data_dir_name)
     result = False
     for line in output.split('\n'):
       if 'gpg: Good signature from' in line:
@@ -108,12 +108,12 @@ class gpg(object):
 
 
 def create_temp_directory():
-  # start the directory name with a dot so that it's hidden.
-  def newDirName():
-    randomDigits = str(uuid.uuid4())[-10:]
-    return '.stateless_gpg_' + randomDigits
+  # Start the directory name with a dot so that it's hidden.
+  def new_dir_name():
+    random_digits = str(uuid.uuid4())[-10:]
+    return '.stateless_gpg_' + random_digits
   while True:
-    name = newDirName()
+    name = new_dir_name()
     if not os.path.exists(name):
       break
   os.mkdir(name)
