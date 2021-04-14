@@ -1,4 +1,4 @@
-from .pytestImports import *
+from ..code.stateless_gpg import gpg
 import os
 import pkgutil
 join = os.path.join
