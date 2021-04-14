@@ -3,8 +3,8 @@ import os
 join = os.path.join
 
 
-# pytests are run from the main 'statelessgpgpython2' package directory.
-dataDirPath = 'src/data'
+# pytests are run from the top-level 'stateless_gpg' package directory.
+dataDirPath = 'stateless_gpg/data'
 
 
 def test_hello_world():
