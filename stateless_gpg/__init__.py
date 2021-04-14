@@ -1,1 +1,1 @@
-from .code.stateless_gpg import WrapperClass as gpg
+from .code.stateless_gpg import gpg

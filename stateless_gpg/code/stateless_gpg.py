@@ -19,7 +19,12 @@ join = os.path.join
 
 
 
-class WrapperClass(object):
+class gpg(object):
+
+
+  # This is a wrapper class. It's meant to be treated as if it were a module. Example:
+  # from stateless_gpg import gpg
+  # signature = gpg.make_signature(private_key, data)
 
 
 
