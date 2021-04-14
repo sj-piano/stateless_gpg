@@ -1,6 +1,17 @@
-from ..code.stateless_gpg import gpg
+# Imports
 import os
 import pkgutil
+
+
+
+
+# Relative imports
+from ..code.stateless_gpg import gpg
+
+
+
+
+# Shortcuts
 join = os.path.join
 
 
