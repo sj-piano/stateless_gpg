@@ -55,6 +55,8 @@ def test_hello_world():
   assert result == True
 
 
+
+
 def test_hello_world_signature_only():
   data_file = '../data/data1.txt'
   data = pkgutil.get_data(__name__, data_file).decode('ascii')
@@ -66,6 +68,13 @@ def test_hello_world_signature_only():
   result = gpg.verify_signature(public_key, data, signature)
   log("result = " + str(result))
   assert result == True
+
+
+
+
+
+
+
 
 
 
