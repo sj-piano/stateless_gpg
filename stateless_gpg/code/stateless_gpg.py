@@ -36,9 +36,9 @@ class gpg(object):
 
 
   @staticmethod
-  def makeSignature(privateKey, data):
-    gpgDirName = createTempDirectory()
-    dataDirName = createTempDirectory()
+  def make_signature(privateKey, data):
+    gpgDirName = create_temp_directory()
+    dataDirName = create_temp_directory()
     privateKeyFilePath = join(dataDirName, 'privateKey.txt')
     with open(privateKeyFilePath, 'w') as f:
       f.write(privateKey)
@@ -46,12 +46,12 @@ class gpg(object):
     with open(dataFilePath, 'w') as f:
       f.write(data)
     permissionsCmd = 'chmod 700 {g}'.format(g=gpgDirName)
-    runLocalCmd(permissionsCmd)
+    run_local_cmd(permissionsCmd)
     importCmd = 'gpg --no-default-keyring --homedir {g} --import {p} 2>&1'.format(g=gpgDirName, p=privateKeyFilePath)
-    runLocalCmd(importCmd)
+    run_local_cmd(importCmd)
     signatureFilePath = join(dataDirName, 'signature.txt')
     signCmd = 'gpg --no-default-keyring --homedir {g} --output {s} --armor --detach-sign {d}'.format(g=gpgDirName, s=signatureFilePath, d=dataFilePath)
-    runLocalCmd(signCmd)
+    run_local_cmd(signCmd)
     signature = open(signatureFilePath).read()
     shutil.rmtree(gpgDirName)
     shutil.rmtree(dataDirName)
@@ -61,7 +61,7 @@ class gpg(object):
 
 
   @staticmethod
-  def verifySignature(publicKey, data, signature):
+  def verify_signature(publicKey, data, signature):
     # Example GPG output: Bad signature
       # gpg: no valid OpenPGP data found.
       # [GNUPG:] NODATA 1
@@ -78,8 +78,8 @@ class gpg(object):
       # gpg: WARNING: This key is not certified with a trusted signature!
       # gpg:          There is no indication that the signature belongs to the owner.
       # Primary key fingerprint: F90F 2002 88C8 6F68 6D65  E58C 3375 AE2D 2553 44FE
-    gpgDirName = createTempDirectory()
-    dataDirName = createTempDirectory()
+    gpgDirName = create_temp_directory()
+    dataDirName = create_temp_directory()
     publicKeyFilePath = join(dataDirName, 'publicKey.txt')
     with open(publicKeyFilePath, 'w') as f:
       f.write(publicKey)
@@ -90,11 +90,11 @@ class gpg(object):
     with open(signatureFilePath, 'w') as f:
       f.write(signature)
     permissionsCmd = 'chmod 700 {g}'.format(g=gpgDirName)
-    runLocalCmd(permissionsCmd)
+    run_local_cmd(permissionsCmd)
     importCmd = 'gpg --no-default-keyring --homedir {g} --import {p} 2>&1'.format(g=gpgDirName, p=publicKeyFilePath)
-    runLocalCmd(importCmd)
+    run_local_cmd(importCmd)
     verifyCmd = 'gpg --no-default-keyring --homedir {g} --status-fd 1 --verify {s} {d} 2>&1'.format(g=gpgDirName, s=signatureFilePath, d=dataFilePath)
-    output = runLocalCmd(verifyCmd)
+    output = run_local_cmd(verifyCmd)
     shutil.rmtree(gpgDirName)
     shutil.rmtree(dataDirName)
     result = False
@@ -107,7 +107,7 @@ class gpg(object):
 
 
 
-def createTempDirectory():
+def create_temp_directory():
   # start the directory name with a dot so that it's hidden.
   def newDirName():
     randomDigits = str(uuid.uuid4())[-10:]
@@ -122,7 +122,7 @@ def createTempDirectory():
 
 
 
-def runLocalCmd(cmd):
+def run_local_cmd(cmd):
   proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   out, err = proc.communicate()
   out = out.decode('ascii')
