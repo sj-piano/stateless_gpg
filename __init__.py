@@ -1,3 +1,3 @@
-# This file allows an external program to do this:
-# from statelessgpgpython2 import gpg
-from .src import gpg
+# The statement below allows an external program to do this:
+# from stateless_gpg import gpg
+from .stateless_gpg import gpg
