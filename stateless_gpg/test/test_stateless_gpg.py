@@ -56,7 +56,7 @@ def test_hello_world():
   public_key = public_key_bytes.decode('ascii')
   result = gpg.verify_signature(public_key, data, signature)
   print("result = " + str(result))
-  assert result == True
+  assert result is True
 
 
 
@@ -71,4 +71,4 @@ def test_hello_world_signature_only():
   public_key = pkgutil.get_data(__name__, public_key_file).decode('ascii')
   result = gpg.verify_signature(public_key, data, signature)
   print("result = " + str(result))
-  assert result == True
+  assert result is True
