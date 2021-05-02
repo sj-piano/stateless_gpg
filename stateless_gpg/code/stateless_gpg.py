@@ -8,7 +8,6 @@ import logging
 
 
 
-
 # Relative imports
 from .. import util
 
@@ -34,7 +33,6 @@ deb = logger.debug
 
 # Notes:
 # - Some GPG commands send output to stderr. Use 2>&1 to redirect this output to stdout.
-
 
 
 
@@ -67,12 +65,8 @@ class gpg(object):
   # signature = gpg.make_signature(private_key, data)
 
 
-
-
   def __init__(self):
     pass
-
-
 
 
   @staticmethod
@@ -95,29 +89,30 @@ class gpg(object):
     signature = open(signature_file).read()
     shutil.rmtree(gpg_dir_name)
     shutil.rmtree(data_dir_name)
+    log("GPG signature created.")
     return signature
-
-
 
 
   @staticmethod
   def verify_signature(public_key, data, signature):
     # Example GPG output: Bad signature
-      # gpg: no valid OpenPGP data found.
-      # [GNUPG:] NODATA 1
-      # [GNUPG:] NODATA 2
-      # gpg: the signature could not be verified.
-      # Please remember that the signature file (.sig or .asc)
-      # should be the first file given on the command line.
-    # Example GPG output: Good signature
-      # [GNUPG:] SIG_ID m6uSV9RYxObc294UbLSUetwlHJw 2020-08-08 1596924121
-      # [GNUPG:] GOODSIG 3375AE2D255344FE Test Key 1
-      # gpg: Good signature from "Test Key 1"
-      # [GNUPG:] VALIDSIG F90F200288C86F686D65E58C3375AE2D255344FE 2020-08-08 1596924121 0 4 0 1 2 00 F90F200288C86F686D65E58C3375AE2D255344FE
-      # [GNUPG:] TRUST_UNDEFINED
-      # gpg: WARNING: This key is not certified with a trusted signature!
-      # gpg:          There is no indication that the signature belongs to the owner.
-      # Primary key fingerprint: F90F 2002 88C8 6F68 6D65  E58C 3375 AE2D 2553 44FE
+### BEGIN EXAMPLE
+# gpg: no valid OpenPGP data found.
+# [GNUPG:] NODATA 1
+# [GNUPG:] NODATA 2
+# gpg: the signature could not be verified.
+# Please remember that the signature file (.sig or .asc)
+# should be the first file given on the command line.
+# Example GPG output: Good signature
+# [GNUPG:] SIG_ID m6uSV9RYxObc294UbLSUetwlHJw 2020-08-08 1596924121
+# [GNUPG:] GOODSIG 3375AE2D255344FE Test Key 1
+# gpg: Good signature from "Test Key 1"
+# [GNUPG:] VALIDSIG F90F200288C86F686D65E58C3375AE2D255344FE 2020-08-08 1596924121 0 4 0 1 2 00 F90F200288C86F686D65E58C3375AE2D255344FE
+# [GNUPG:] TRUST_UNDEFINED
+# gpg: WARNING: This key is not certified with a trusted signature!
+# gpg:          There is no indication that the signature belongs to the owner.
+# Primary key fingerprint: F90F 2002 88C8 6F68 6D65  E58C 3375 AE2D 2553 44FE
+### END EXAMPLE
     gpg_dir_name = create_temp_directory()
     data_dir_name = create_temp_directory()
     public_key_file = join(data_dir_name, 'public_key.txt')
@@ -142,6 +137,7 @@ class gpg(object):
       if 'gpg: Good signature from' in line:
         result = True
         break
+    log("GPG signature verified.")
     return result
 
 
@@ -175,8 +171,8 @@ def run_local_cmd(cmd):
 
 
 
-def stop(msg=''):
-  raise Exception(msg)
-
-
-
+def stop(msg=None):
+  if msg is not None:
+    print(msg)
+  import sys
+  sys.exit()
