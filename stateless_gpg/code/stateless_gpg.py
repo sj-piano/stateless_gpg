@@ -137,7 +137,10 @@ class gpg(object):
       if 'gpg: Good signature from' in line:
         result = True
         break
-    log("GPG signature verified.")
+    if result:
+      log("GPG signature verified.")
+    else:
+      log("Invalid GPG signature.")
     return result
 
 
