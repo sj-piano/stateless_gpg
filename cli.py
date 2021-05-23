@@ -113,7 +113,7 @@ def main():
   parser.add_argument(
     '-z', '--logFile',
     help="The path to the file that log output will be written to.",
-    default='log_edgecase_client.txt',
+    default='log_stateless_gpg.txt',
   )
 
   a = parser.parse_args()
