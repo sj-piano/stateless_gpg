@@ -131,8 +131,9 @@ def main():
   # Run top-level function (i.e. the appropriate task).
   tasks = 'hello fail'.split()
   if a.task not in tasks:
-    print("Unrecognised task: {}".format(a.task))
-    stop()
+    msg = "Unrecognised task: {}".format(a.task)
+    msg += "\nTask list: {}".format(tasks)
+    stop(msg)
   globals()[a.task](a)  # run task.
 
 
@@ -166,7 +167,7 @@ def fail(a):
   log("result = " + str(result))
   if not result:
     raise Exception("Failed to create and verify signature.")
-  print("Signature created and verified.")
+  print("Signature created and verified. Signature was not saved to a file.")
 
 
 
