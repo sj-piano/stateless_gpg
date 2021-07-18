@@ -106,9 +106,11 @@ class gpg(object):
       f.write(data)
     permissions_cmd = 'chmod 700 {g}'.format(g=gpg_dir_name)
     run_local_cmd(permissions_cmd)
+    # Import private key into tmp keyring.
     import_cmd = '{n} --no-default-keyring --homedir {g} --import {p} 2>&1'
     import_cmd = import_cmd.format(n=gpg_cmd_name, g=gpg_dir_name, p=private_key_file)
     run_local_cmd(import_cmd)
+    # Sign the data using the private key.
     signature_file = join(data_dir_name, 'signature.txt')
     sign_cmd = '{n} --no-default-keyring --homedir {g} --output {s} --armor --detach-sign {d}'
     sign_cmd = sign_cmd.format(n=gpg_cmd_name, g=gpg_dir_name, s=signature_file, d=data_file)
@@ -155,9 +157,11 @@ class gpg(object):
       f.write(signature)
     permissions_cmd = 'chmod 700 {g}'.format(g=gpg_dir_name)
     run_local_cmd(permissions_cmd)
+    # Import public key into tmp keyring.
     import_cmd = '{n} --no-default-keyring --homedir {g} --import {p} 2>&1'
     import_cmd = import_cmd.format(n=gpg_cmd_name, g=gpg_dir_name, p=public_key_file)
     run_local_cmd(import_cmd)
+    # Verify the signature using the public key.
     verify_cmd = '{n} --no-default-keyring --homedir {g} --status-fd 1 --verify {s} {d} 2>&1'
     verify_cmd = verify_cmd.format(n=gpg_cmd_name, g=gpg_dir_name, s=signature_file, d=data_file)
     output, exit_code = run_local_cmd(verify_cmd)
