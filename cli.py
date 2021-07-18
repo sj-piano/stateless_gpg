@@ -132,7 +132,9 @@ def main():
 
   # Run top-level function (i.e. the appropriate task).
   tasks = """
-test_sign_and_verify test_sign_failure gpg_name test_encrypt
+test_sign_and_verify test_sign_and_verify_failure
+gpg_name
+test_encrypt
 test_decrypt
 """.split()
   if a.task not in tasks:
@@ -163,7 +165,7 @@ def test_sign_and_verify(a):
 
 
 
-def test_sign_failure(a):
+def test_sign_and_verify_failure(a):
   data = "hello world\n"
   log("data = " + data.strip())
   private_key_file = 'stateless_gpg/data/test_key_1_private_key.txt'
