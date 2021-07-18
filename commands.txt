@@ -1,0 +1,126 @@
+
+
+
+
+
+
+
+
+
+
+
+
+### Examples
+
+
+
+stjohn@judgement:stateless_gpg$ gpg --list-packets stateless_gpg/data/data1_encrypted_to_test_key_1.txt
+:pubkey enc packet: version 3, algo 1, keyid 9F2F2255D3066E8E
+        data: [4096 bits]
+:encrypted data packet:
+        length: 79
+        mdc_method: 2
+gpg: encrypted with RSA key, ID D3066E8E
+gpg: decryption failed: secret key not available
+
+
+
+
+stjohn@judgement:stateless_gpg$ gpg --fingerprint --list-packets stateless_gpg/data/data1_signature_by_test_key_1.txt
+:signature packet: algo 1, keyid 3375AE2D255344FE
+        version 4, created 1596913599, md5len 0, sigclass 0x00
+        digest algo 2, begin of digest e5 ed
+        hashed subpkt 2 len 4 (sig created 2020-08-08)
+        subpkt 16 len 8 (issuer key ID 3375AE2D255344FE)
+        data: [4095 bits]
+
+
+
+
+
+
+stjohn@judgement:stateless_gpg$ gpg --fingerprint --list-packets stateless_gpg/data/test_key_1_private_key.txt
+:secret key packet:
+        version 4, algo 1, created 1596913366, expires 0
+        skey[0]: [4096 bits]
+        skey[1]: [17 bits]
+        skey[2]: [4092 bits]
+        skey[3]: [2048 bits]
+        skey[4]: [2048 bits]
+        skey[5]: [2048 bits]
+        checksum: 68be
+        keyid: 3375AE2D255344FE
+:user ID packet: "Test Key 1"
+:signature packet: algo 1, keyid 3375AE2D255344FE
+        version 4, created 1596913366, md5len 0, sigclass 0x13
+        digest algo 2, begin of digest b3 48
+        hashed subpkt 2 len 4 (sig created 2020-08-08)
+        hashed subpkt 27 len 1 (key flags: 03)
+        hashed subpkt 11 len 5 (pref-sym-algos: 9 8 7 3 2)
+        hashed subpkt 21 len 5 (pref-hash-algos: 8 2 9 10 11)
+        hashed subpkt 22 len 2 (pref-zip-algos: 2 1)
+        hashed subpkt 30 len 1 (features: 01)
+        hashed subpkt 23 len 1 (key server preferences: 80)
+        subpkt 16 len 8 (issuer key ID 3375AE2D255344FE)
+        data: [4092 bits]
+:secret sub key packet:
+        version 4, algo 1, created 1596913366, expires 0
+        skey[0]: [4096 bits]
+        skey[1]: [17 bits]
+        skey[2]: [4093 bits]
+        skey[3]: [2048 bits]
+        skey[4]: [2048 bits]
+        skey[5]: [2048 bits]
+        checksum: 76df
+        keyid: 9F2F2255D3066E8E
+:signature packet: algo 1, keyid 3375AE2D255344FE
+        version 4, created 1596913366, md5len 0, sigclass 0x18
+        digest algo 2, begin of digest 51 b8
+        hashed subpkt 2 len 4 (sig created 2020-08-08)
+        hashed subpkt 27 len 1 (key flags: 0C)
+        subpkt 16 len 8 (issuer key ID 3375AE2D255344FE)
+        data: [4094 bits]
+
+
+
+
+
+
+
+
+
+stjohn@judgement:stateless_gpg$ gpg --fingerprint --list-packets stateless_gpg/data/test_key_1_public_key.txt
+:public key packet:
+        version 4, algo 1, created 1596913366, expires 0
+        pkey[0]: [4096 bits]
+        pkey[1]: [17 bits]
+        keyid: 3375AE2D255344FE
+:user ID packet: "Test Key 1"
+:signature packet: algo 1, keyid 3375AE2D255344FE
+        version 4, created 1596913366, md5len 0, sigclass 0x13
+        digest algo 2, begin of digest b3 48
+        hashed subpkt 2 len 4 (sig created 2020-08-08)
+        hashed subpkt 27 len 1 (key flags: 03)
+        hashed subpkt 11 len 5 (pref-sym-algos: 9 8 7 3 2)
+        hashed subpkt 21 len 5 (pref-hash-algos: 8 2 9 10 11)
+        hashed subpkt 22 len 2 (pref-zip-algos: 2 1)
+        hashed subpkt 30 len 1 (features: 01)
+        hashed subpkt 23 len 1 (key server preferences: 80)
+        subpkt 16 len 8 (issuer key ID 3375AE2D255344FE)
+        data: [4092 bits]
+:public sub key packet:
+        version 4, algo 1, created 1596913366, expires 0
+        pkey[0]: [4096 bits]
+        pkey[1]: [17 bits]
+        keyid: 9F2F2255D3066E8E
+:signature packet: algo 1, keyid 3375AE2D255344FE
+        version 4, created 1596913366, md5len 0, sigclass 0x18
+        digest algo 2, begin of digest 51 b8
+        hashed subpkt 2 len 4 (sig created 2020-08-08)
+        hashed subpkt 27 len 1 (key flags: 0C)
+        subpkt 16 len 8 (issuer key ID 3375AE2D255344FE)
+        data: [4094 bits]
+
+
+
+
