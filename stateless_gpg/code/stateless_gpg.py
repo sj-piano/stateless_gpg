@@ -129,7 +129,7 @@ class gpg(object):
     import_cmd = 'gpg --no-default-keyring --homedir {g} --import {p} 2>&1'.format(g=gpg_dir_name, p=public_key_file)
     run_local_cmd(import_cmd)
     verify_cmd = 'gpg --no-default-keyring --homedir {g} --status-fd 1 --verify {s} {d} 2>&1'.format(g=gpg_dir_name, s=signature_file, d=data_file)
-    output = run_local_cmd(verify_cmd)
+    output, exit_code = run_local_cmd(verify_cmd)
     shutil.rmtree(gpg_dir_name)
     shutil.rmtree(data_dir_name)
     result = False
@@ -164,12 +164,13 @@ def create_temp_directory():
 def run_local_cmd(cmd):
   proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   out, err = proc.communicate()
-  out = out.decode('ascii')
+  exit_code = proc.wait()
+  output = out.decode('ascii')
   err = err.decode('ascii')
   if err != '':
     msg = 'COMMAND FAILED\n' + '$ ' + cmd + '\n' + err
     stop(msg)
-  return out
+  return output, exit_code
 
 
 
