@@ -113,7 +113,8 @@ class gpg(object):
     sign_cmd = '{n} --no-default-keyring --homedir {g} --output {s} --armor --detach-sign {d}'
     sign_cmd = sign_cmd.format(n=gpg_cmd_name, g=gpg_dir_name, s=signature_file, d=data_file)
     run_local_cmd(sign_cmd)
-    signature = open(signature_file).read()
+    with open(signature_file) as f:
+      signature = f.read()
     shutil.rmtree(gpg_dir_name)
     shutil.rmtree(data_dir_name)
     log("GPG signature created.")
