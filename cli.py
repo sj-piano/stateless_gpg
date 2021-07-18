@@ -131,7 +131,10 @@ def main():
   )
 
   # Run top-level function (i.e. the appropriate task).
-  tasks = 'hello fail command'.split()
+  tasks = """
+test_sign_and_verify test_sign_failure gpg_name test_encrypt
+test_decrypt
+""".split()
   if a.task not in tasks:
     msg = "Unrecognised task: {}".format(a.task)
     msg += "\nTask list: {}".format(tasks)
@@ -141,7 +144,7 @@ def main():
 
 
 
-def hello(a):
+def test_sign_and_verify(a):
   data = "hello world\n"
   log("data = " + data.strip())
   private_key_file = 'stateless_gpg/data/test_key_1_private_key.txt'
@@ -158,7 +161,7 @@ def hello(a):
 
 
 
-def fail(a):
+def test_sign_failure(a):
   data = "hello world\n"
   log("data = " + data.strip())
   private_key_file = 'stateless_gpg/data/test_key_1_private_key.txt'
@@ -174,7 +177,7 @@ def fail(a):
 
 
 
-def command(a):
+def gpg_name(a):
   gpg_cmd_name = gpg.get_available_gpg_command()
   print(gpg_cmd_name)
 
