@@ -148,10 +148,12 @@ def test_sign_and_verify(a):
   data = "hello world\n"
   log("data = " + data.strip())
   private_key_file = 'stateless_gpg/data/test_key_1_private_key.txt'
-  private_key = open(private_key_file).read()
+  with open(private_key_file) as f:
+    private_key = f.read()
   signature = gpg.make_signature(private_key, data)
   public_key_file = 'stateless_gpg/data/test_key_1_public_key.txt'
-  public_key = open(public_key_file).read()
+  with open(public_key_file) as f:
+    public_key = f.read()
   result = gpg.verify_signature(public_key, data, signature)
   log("result = " + str(result))
   if not result:
@@ -165,7 +167,8 @@ def test_sign_failure(a):
   data = "hello world\n"
   log("data = " + data.strip())
   private_key_file = 'stateless_gpg/data/test_key_1_private_key.txt'
-  private_key = open(private_key_file).read()
+  with open(private_key_file) as f:
+    private_key = f.read()
   signature = gpg.make_signature(private_key, data)
   public_key = "invalid key data"
   result = gpg.verify_signature(public_key, data, signature)
