@@ -167,16 +167,16 @@ class gpg(object):
     output, exit_code = run_local_cmd(verify_cmd)
     shutil.rmtree(gpg_dir_name)
     shutil.rmtree(data_dir_name)
-    result = False
+    success = False
     for line in output.split('\n'):
       if 'Good signature from' in line:
-        result = True
+        success = True
         break
-    if result:
+    if success:
       log("GPG signature verified.")
     else:
       log("Invalid GPG signature.")
-    return result
+    return success
 
 
 
