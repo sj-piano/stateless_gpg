@@ -89,7 +89,7 @@ def main():
     '-l', '--logLevel', type=str, dest='log_level',
     choices=['debug', 'info', 'warning', 'error'],
     help="Choose logging level (default: '%(default)s').",
-    default='info',
+    default='error',
   )
 
   parser.add_argument(
