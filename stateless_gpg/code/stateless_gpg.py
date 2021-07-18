@@ -179,6 +179,107 @@ class gpg(object):
     return success
 
 
+  @staticmethod
+  def encrypt_data(public_key, data):
+    gpg_cmd_name = gpg.get_available_gpg_command()
+    gpg_dir_name = create_temp_directory()
+    data_dir_name = create_temp_directory()
+    public_key_file = join(data_dir_name, 'public_key.txt')
+    with open(public_key_file, 'w') as f:
+      f.write(public_key)
+    data_file = join(data_dir_name, 'data.txt')
+    with open(data_file, 'w') as f:
+      f.write(data)
+    ciphertext_file = join(data_dir_name, 'ciphertext.txt')
+    permissions_cmd = 'chmod 700 {g}'.format(g=gpg_dir_name)
+    run_local_cmd(permissions_cmd)
+    # Import public key into tmp keyring.
+    import_cmd = '{n} --no-default-keyring --homedir {g} --import {p} 2>&1'
+    import_cmd = import_cmd.format(n=gpg_cmd_name, g=gpg_dir_name, p=public_key_file)
+    run_local_cmd(import_cmd)
+    # Load fingerprint of public key.
+    display_cmd = '{n} --no-default-keyring --homedir {g} --keyid-format long --fingerprint --list-keys'
+    display_cmd = display_cmd.format(n=gpg_cmd_name, g=gpg_dir_name)
+    output, exit_code = run_local_cmd(display_cmd)
+# Example output:
+# .stateless_gpg_891ec63978/pubring.gpg
+# -------------------------------------
+# pub   4096R/3375AE2D255344FE 2020-08-08
+#       Key fingerprint = F90F 2002 88C8 6F68 6D65  E58C 3375 AE2D 2553 44FE
+# uid                          Test Key 1
+# sub   4096R/9F2F2255D3066E8E 2020-08-08
+    fingerprint = None
+    for line in output.splitlines():
+      if 'Key fingerprint' in line:
+        fingerprint = line.split(' = ')[1].replace(' ', '')
+    if not fingerprint:
+      raise ValueError
+    # Encrypt the data, using the fingerprint to specify the recipient.
+    # Note: "--trust-model always" allows the "--yes" option to work properly.
+    encrypt_cmd = '{n} --no-default-keyring --homedir {g} --keyid-format long --output {c} --armor --recipient {f} --yes --trust-model always --encrypt {d}'
+    encrypt_cmd = encrypt_cmd.format(n=gpg_cmd_name, g=gpg_dir_name, f=fingerprint, c=ciphertext_file, d=data_file)
+    run_local_cmd(encrypt_cmd)
+    with open(ciphertext_file) as f:
+      ciphertext = f.read()
+    shutil.rmtree(gpg_dir_name)
+    shutil.rmtree(data_dir_name)
+    log("GPG ciphertext created.")
+    return ciphertext
+
+
+  @staticmethod
+  def decrypt_data(private_key, ciphertext):
+    gpg_cmd_name = gpg.get_available_gpg_command()
+    gpg_dir_name = create_temp_directory()
+    data_dir_name = create_temp_directory()
+    private_key_file = join(data_dir_name, 'private_key.txt')
+    with open(private_key_file, 'w') as f:
+      f.write(private_key)
+    ciphertext_file = join(data_dir_name, 'ciphertext.txt')
+    with open(ciphertext_file, 'w') as f:
+      f.write(ciphertext)
+    permissions_cmd = 'chmod 700 {g}'.format(g=gpg_dir_name)
+    run_local_cmd(permissions_cmd)
+    # Import private key into tmp keyring.
+    import_cmd = '{n} --no-default-keyring --homedir {g} --import {p} 2>&1'
+    import_cmd = import_cmd.format(n=gpg_cmd_name, g=gpg_dir_name, p=private_key_file)
+    run_local_cmd(import_cmd)
+    # Decrypt the data, using the single private key in the tmp keyring.
+    # Note the use of "2>&1". This GPG command sends some output to the stderr channel.
+    plaintext_file = join(data_dir_name, 'data.txt')
+    decrypt_cmd = '{n} --no-default-keyring --homedir {g} --status-fd 1 --keyid-format long --output {p} --decrypt {c} 2>&1'
+    decrypt_cmd = decrypt_cmd.format(n=gpg_cmd_name, g=gpg_dir_name, p=plaintext_file, c=ciphertext_file)
+    output, exit_code = run_local_cmd(decrypt_cmd)
+# Example output:
+# [GNUPG:] ENC_TO 9F2F2255D3066E8E 1 0
+# [GNUPG:] GOOD_PASSPHRASE
+# gpg: encrypted with 4096-bit RSA key, ID 9F2F2255D3066E8E, created 2020-08-08
+#       "Test Key 1"
+# [GNUPG:] BEGIN_DECRYPTION
+# [GNUPG:] DECRYPTION_INFO 2 9
+# [GNUPG:] PLAINTEXT 62 1626621126 data.txt
+# [GNUPG:] PLAINTEXT_LENGTH 12
+# [GNUPG:] DECRYPTION_OKAY
+# [GNUPG:] GOODMDC
+# [GNUPG:] END_DECRYPTION
+    success = False
+    for line in output.split('\n'):
+      if 'DECRYPTION_OKAY' in line:
+        success = True
+        break
+    if not success:
+      log("GPG failed to decrypt ciphertext.")
+      log("decrypt_cmd: {}".format(decrypt_cmd))
+      log("output: {}".format(output))
+      return None
+    with open(plaintext_file) as f:
+      plaintext = f.read()
+    shutil.rmtree(gpg_dir_name)
+    shutil.rmtree(data_dir_name)
+    log("GPG ciphertext decrypted.")
+    return plaintext
+
+
 
 
 def create_temp_directory():
