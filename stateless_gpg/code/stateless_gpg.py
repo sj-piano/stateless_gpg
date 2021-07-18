@@ -93,8 +93,6 @@ class gpg(object):
     raise ValueError(msg)
 
 
-
-
   @staticmethod
   def make_signature(private_key, data):
     gpg_dir_name = create_temp_directory()
