@@ -70,6 +70,32 @@ class gpg(object):
 
 
   @staticmethod
+  def get_available_gpg_command():
+    # We want the bash command that calls GPG 1.4.x.
+    # (Not GPG 2.x)
+    gpg_cmd_names = 'gpg gpgv1'.split()
+    for name in gpg_cmd_names:
+      if shell_tool_exists(name):
+        output, exit_code = run_local_cmd(name + ' --version')
+        if exit_code != 0:
+          raise ValueError
+        version_line = output.splitlines()[0]
+        # Examples:
+        # gpg (GnuPG) 1.4.20
+        # gpg (GnuPG) 2.2.19
+        # gpgv (GnuPG) 1.4.23
+        version = version_line.split()[-1]
+        major, minor, patch = version.split('.')
+        if major == '1' and minor == '4':
+          return name
+    msg = "Tried each bash command in this list: {}".format(gpg_cmd_names)
+    msg += ". None of them lead to GPG 1.4.x."
+    raise ValueError(msg)
+
+
+
+
+  @staticmethod
   def make_signature(private_key, data):
     gpg_dir_name = create_temp_directory()
     data_dir_name = create_temp_directory()
@@ -157,6 +183,16 @@ def create_temp_directory():
       break
   os.mkdir(name)
   return name
+
+
+
+
+def shell_tool_exists(tool):
+  if ' ' in tool:
+    raise ValueError
+  tool = 'command -v {}'.format(tool)
+  output, exit_code = run_local_cmd(tool)
+  return not exit_code
 
 
 

@@ -131,7 +131,7 @@ def main():
   )
 
   # Run top-level function (i.e. the appropriate task).
-  tasks = 'hello fail'.split()
+  tasks = 'hello fail command'.split()
   if a.task not in tasks:
     msg = "Unrecognised task: {}".format(a.task)
     msg += "\nTask list: {}".format(tasks)
@@ -170,6 +170,13 @@ def fail(a):
   if not result:
     raise Exception("Failed to create and verify signature.")
   print("Signature created and verified. Signature was not saved to a file.")
+
+
+
+
+def command(a):
+  gpg_cmd_name = gpg.get_available_gpg_command()
+  print(gpg_cmd_name)
 
 
 
