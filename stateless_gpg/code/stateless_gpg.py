@@ -164,7 +164,7 @@ class gpg(object):
     shutil.rmtree(data_dir_name)
     result = False
     for line in output.split('\n'):
-      if 'gpg: Good signature from' in line:
+      if 'Good signature from' in line:
         result = True
         break
     if result:
