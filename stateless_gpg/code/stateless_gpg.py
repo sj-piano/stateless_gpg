@@ -95,6 +95,7 @@ class gpg(object):
 
   @staticmethod
   def make_signature(private_key, data):
+    gpg_cmd_name = gpg.get_available_gpg_command()
     gpg_dir_name = create_temp_directory()
     data_dir_name = create_temp_directory()
     private_key_file = join(data_dir_name, 'private_key.txt')
@@ -105,10 +106,12 @@ class gpg(object):
       f.write(data)
     permissions_cmd = 'chmod 700 {g}'.format(g=gpg_dir_name)
     run_local_cmd(permissions_cmd)
-    import_cmd = 'gpg --no-default-keyring --homedir {g} --import {p} 2>&1'.format(g=gpg_dir_name, p=private_key_file)
+    import_cmd = '{n} --no-default-keyring --homedir {g} --import {p} 2>&1'
+    import_cmd = import_cmd.format(n=gpg_cmd_name, g=gpg_dir_name, p=private_key_file)
     run_local_cmd(import_cmd)
     signature_file = join(data_dir_name, 'signature.txt')
-    sign_cmd = 'gpg --no-default-keyring --homedir {g} --output {s} --armor --detach-sign {d}'.format(g=gpg_dir_name, s=signature_file, d=data_file)
+    sign_cmd = '{n} --no-default-keyring --homedir {g} --output {s} --armor --detach-sign {d}'
+    sign_cmd = sign_cmd.format(n=gpg_cmd_name, g=gpg_dir_name, s=signature_file, d=data_file)
     run_local_cmd(sign_cmd)
     signature = open(signature_file).read()
     shutil.rmtree(gpg_dir_name)
@@ -137,6 +140,7 @@ class gpg(object):
 # gpg:          There is no indication that the signature belongs to the owner.
 # Primary key fingerprint: F90F 2002 88C8 6F68 6D65  E58C 3375 AE2D 2553 44FE
 ### END EXAMPLE
+    gpg_cmd_name = gpg.get_available_gpg_command()
     gpg_dir_name = create_temp_directory()
     data_dir_name = create_temp_directory()
     public_key_file = join(data_dir_name, 'public_key.txt')
@@ -150,9 +154,11 @@ class gpg(object):
       f.write(signature)
     permissions_cmd = 'chmod 700 {g}'.format(g=gpg_dir_name)
     run_local_cmd(permissions_cmd)
-    import_cmd = 'gpg --no-default-keyring --homedir {g} --import {p} 2>&1'.format(g=gpg_dir_name, p=public_key_file)
+    import_cmd = '{n} --no-default-keyring --homedir {g} --import {p} 2>&1'
+    import_cmd = import_cmd.format(n=gpg_cmd_name, g=gpg_dir_name, p=public_key_file)
     run_local_cmd(import_cmd)
-    verify_cmd = 'gpg --no-default-keyring --homedir {g} --status-fd 1 --verify {s} {d} 2>&1'.format(g=gpg_dir_name, s=signature_file, d=data_file)
+    verify_cmd = '{n} --no-default-keyring --homedir {g} --status-fd 1 --verify {s} {d} 2>&1'
+    verify_cmd = verify_cmd.format(n=gpg_cmd_name, g=gpg_dir_name, s=signature_file, d=data_file)
     output, exit_code = run_local_cmd(verify_cmd)
     shutil.rmtree(gpg_dir_name)
     shutil.rmtree(data_dir_name)
