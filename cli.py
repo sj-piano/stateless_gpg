@@ -310,8 +310,10 @@ def test_sign_and_verify_failure(a):
   with open(private_key_file) as f:
     private_key = f.read()
   signature = gpg.make_signature(private_key, data)
-  # Verify the signature.
-  public_key = "invalid key data"
+  # Verify the signature using the wrong key.
+  public_key_file = 'stateless_gpg/data/morgan_industries_public_key.txt'
+  with open(public_key_file) as f:
+    public_key = f.read()
   result = gpg.verify_signature(public_key, data, signature)
   log("result = " + str(result))
   if not result:
@@ -351,8 +353,10 @@ def test_encrypt_and_decrypt_failure(a):
   with open(public_key_file) as f:
     public_key = f.read()
   ciphertext = gpg.encrypt_data(public_key, data)
-  # Decrypt the data.
-  private_key = "invalid key data"
+  # Decrypt the data using the wrong key.
+  private_key_file = 'stateless_gpg/data/morgan_industries_private_key.txt'
+  with open(private_key_file) as f:
+    private_key = f.read()
   plaintext = gpg.decrypt_data(private_key, ciphertext)
   log("plaintext = " + str(plaintext))
   success = plaintext == data
