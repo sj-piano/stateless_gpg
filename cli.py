@@ -21,6 +21,8 @@ import stateless_gpg
 
 # Shortcuts
 gpg = stateless_gpg.code.stateless_gpg.gpg
+isfile = os.path.isfile
+isdir = os.path.isdir
 
 
 
@@ -86,6 +88,36 @@ def main():
   )
 
   parser.add_argument(
+    '--privateKeyFile', dest='private_key_file',
+    help="Path to file containing an ASCII-armored GPG private key (default: '%(default)s').",
+    default='cli_input/private_keys/private_key.txt',
+  )
+
+  parser.add_argument(
+    '--publicKeyFile', dest='public_key_file',
+    help="Path to file containing an ASCII-armored GPG public key (default: '%(default)s').",
+    default='cli_input/public_keys/public_key.txt',
+  )
+
+  parser.add_argument(
+    '--dataFile', dest='data_file',
+    help="Path to file containing plaintext data (default: '%(default)s').",
+    default='cli_input/data.txt',
+  )
+
+  parser.add_argument(
+    '--signatureFile', dest='signature_file',
+    help="Path to file containing an ASCII-armored GPG signature (default: '%(default)s').",
+    default='cli_input/signature.txt',
+  )
+
+  parser.add_argument(
+    '--ciphertextFile', dest='ciphertext_file',
+    help="Path to file containing ASCII-armored GPG ciphertext (default: '%(default)s').",
+    default='cli_input/ciphertext.txt',
+  )
+
+  parser.add_argument(
     '-l', '--logLevel', type=str, dest='log_level',
     choices=['debug', 'info', 'warning', 'error'],
     help="Choose logging level (default: '%(default)s').",
@@ -118,9 +150,55 @@ def main():
 
   a = parser.parse_args()
 
+
   # Check and analyse arguments.
+
   if not a.log_to_file:
     a.log_file = None
+
+  if a.task == 'sign':
+    if not isfile(a.private_key_file):
+      msg = "File not found at private_key_file {}".format(repr(a.private_key_file))
+      raise FileNotFoundError(msg)
+    if not isfile(a.data_file):
+      msg = "File not found at data_file {}".format(repr(a.data_file))
+      raise FileNotFoundError(msg)
+
+  if a.task == 'verify':
+    if not isfile(a.public_key_file):
+      msg = "File not found at public_key_file {}".format(repr(a.public_key_file))
+      raise FileNotFoundError(msg)
+    if not isfile(a.data_file):
+      msg = "File not found at data_file {}".format(repr(a.data_file))
+      raise FileNotFoundError(msg)
+    if not isfile(a.signature_file):
+      msg = "File not found at signature_file {}".format(repr(a.signature_file))
+      raise FileNotFoundError(msg)
+
+  if a.task == 'encrypt':
+    if not isfile(a.public_key_file):
+      msg = "File not found at public_key_file {}".format(repr(a.public_key_file))
+      raise FileNotFoundError(msg)
+    if not isfile(a.data_file):
+      msg = "File not found at data_file {}".format(repr(a.data_file))
+      raise FileNotFoundError(msg)
+
+  if a.task == 'decrypt':
+    if not isfile(a.private_key_file):
+      msg = "File not found at private_key_file {}".format(repr(a.private_key_file))
+      raise FileNotFoundError(msg)
+    if not isfile(a.ciphertext_file):
+      msg = "File not found at ciphertext_file {}".format(repr(a.ciphertext_file))
+      raise FileNotFoundError(msg)
+
+  if a.task == 'view':
+    x = isfile(a.private_key_file)
+    y = isfile(a.public_key_file)
+    if not x and not y:
+      msg = "File not found at private_key_file {}".format(repr(a.private_key_file))
+      msg += ", and file not found at public_key_file {}".format(repr(a.public_key_file))
+      raise FileNotFoundError(msg)
+
 
   # Setup
   setup(
@@ -136,6 +214,7 @@ sign verify encrypt decrypt
 gpg_name
 test_sign_and_verify test_sign_and_verify_failure
 test_encrypt_and_decrypt test_encrypt_and_decrypt_failure
+key_details
 """.split()
   if a.task not in tasks:
     msg = "Unrecognised task: {}".format(a.task)
@@ -147,23 +226,39 @@ test_encrypt_and_decrypt test_encrypt_and_decrypt_failure
 
 
 def sign(a):
-  pass
+  with open(a.private_key_file) as f:
+    private_key = f.read()
+  with open(a.data_file) as f:
+    data = f.read()
+  signature = gpg.make_signature(private_key, data)
+  print(signature)
 
 
 
 
 def verify(a):
-  pass
+  with open(a.public_key_file) as f:
+    public_key = f.read()
+  with open(a.data_file) as f:
+    data = f.read()
+  with open(a.signature_file) as f:
+    signature = f.read()
+  result = gpg.verify_signature(public_key, data, signature)
+  if result:
+    print("Signature is valid.")
+    sys.exit(0)
+  else:
+    print("Signature is not valid.")
+    sys.exit(1)
 
 
 
 
 def encrypt(a):
-  data = "hello world\n"
-  log("data = " + data.strip())
-  public_key_file = 'stateless_gpg/data/test_key_1_public_key.txt'
-  with open(public_key_file) as f:
+  with open(a.public_key_file) as f:
     public_key = f.read()
+  with open(a.data_file) as f:
+    data = f.read()
   ciphertext = gpg.encrypt_data(public_key, data)
   print(ciphertext)
 
@@ -171,7 +266,12 @@ def encrypt(a):
 
 
 def decrypt(a):
-  pass
+  with open(a.private_key_file) as f:
+    private_key = f.read()
+  with open(a.ciphertext_file) as f:
+    ciphertext = f.read()
+  data = gpg.decrypt_data(private_key, ciphertext)
+  print(data)
 
 
 
@@ -260,6 +360,20 @@ def test_encrypt_and_decrypt_failure(a):
     raise Exception("Failed to encrypt and decrypt data.")
   print("Data encrypted and decrypted. Ciphertext was not saved to a file.")
 
+
+
+
+def key_details(a):
+  if isfile(a.private_key_file):
+    with open(a.private_key_file) as f:
+      private_key = f.read()
+      key_details = gpg.get_key_details(private_key, key_type='private')
+      print(key_details)
+  if isfile(a.public_key_file):
+    with open(a.public_key_file) as f:
+      public_key = f.read()
+      key_details = gpg.get_key_details(public_key, key_type='public')
+      print(key_details)
 
 
 
