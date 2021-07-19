@@ -19,19 +19,6 @@ python3 cli.py --logLevel=info --task encrypt --publicKeyFile stateless_gpg/data
 python3 cli.py --logLevel=info --task decrypt --privateKeyFile stateless_gpg/data/test_key_1_private_key.txt --ciphertextFile stateless_gpg/data/data1_encrypted_to_test_key_1.txt
 
 
-python3 cli.py --logLevel=info --task test_sign_and_verify
-
-
-python3 cli.py --logLevel=info --task test_sign_and_verify_failure
-
-
-python3 cli.py --logLevel=info --task test_encrypt_and_decrypt
-
-
-python3 cli.py --logLevel=info --task test_encrypt_and_decrypt_failure
-
-
-
 python3 cli.py -t key_details --privateKeyFile stateless_gpg/data/test_key_1_private_key.txt --publicKeyFile stateless_gpg/data/test_key_1_public_key.txt
 
 
