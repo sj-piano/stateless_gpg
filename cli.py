@@ -191,7 +191,7 @@ def main():
       msg = "File not found at ciphertext_file {}".format(repr(a.ciphertext_file))
       raise FileNotFoundError(msg)
 
-  if a.task == 'view':
+  if a.task == 'key_details':
     x = isfile(a.private_key_file)
     y = isfile(a.public_key_file)
     if not x and not y:

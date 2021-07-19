@@ -32,7 +32,7 @@ python3 cli.py --logLevel=info --task test_encrypt_and_decrypt_failure
 
 
 
-python3 cli.py -t view --privateKeyFile stateless_gpg/data/test_key_1_private_key.txt --publicKeyFile stateless_gpg/data/test_key_1_public_key.txt
+python3 cli.py -t key_details --privateKeyFile stateless_gpg/data/test_key_1_private_key.txt --publicKeyFile stateless_gpg/data/test_key_1_public_key.txt
 
 
 
