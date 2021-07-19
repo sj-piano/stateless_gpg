@@ -118,6 +118,12 @@ def main():
   )
 
   parser.add_argument(
+    '--wrappedDataFile', dest='wrapped_data_file',
+    help="Path to file containing ASCII-armored GPG ciphertext, which contains signed data (default: '%(default)s').",
+    default='cli_input/wrapped_data.txt',
+  )
+
+  parser.add_argument(
     '-l', '--logLevel', type=str, dest='log_level',
     choices=['debug', 'info', 'warning', 'error'],
     help="Choose logging level (default: '%(default)s').",
@@ -149,7 +155,6 @@ def main():
   )
 
   a = parser.parse_args()
-
 
   # Check and analyse arguments.
 
@@ -199,6 +204,27 @@ def main():
       msg += ", and file not found at public_key_file {}".format(repr(a.public_key_file))
       raise FileNotFoundError(msg)
 
+  if a.task == 'wrap':
+    if not isfile(a.private_key_file):
+      msg = "File not found at private_key_file {}".format(repr(a.private_key_file))
+      raise FileNotFoundError(msg)
+    if not isfile(a.public_key_file):
+      msg = "File not found at public_key_file {}".format(repr(a.public_key_file))
+      raise FileNotFoundError(msg)
+    if not isfile(a.data_file):
+      msg = "File not found at data_file {}".format(repr(a.data_file))
+      raise FileNotFoundError(msg)
+
+  if a.task == 'unwrap':
+    if not isfile(a.private_key_file):
+      msg = "File not found at private_key_file {}".format(repr(a.private_key_file))
+      raise FileNotFoundError(msg)
+    if not isfile(a.public_key_file):
+      msg = "File not found at public_key_file {}".format(repr(a.public_key_file))
+      raise FileNotFoundError(msg)
+    if not isfile(a.wrapped_data_file):
+      msg = "File not found at wrapped_data_file {}".format(repr(a.wrapped_data_file))
+      raise FileNotFoundError(msg)
 
   # Setup
   setup(
@@ -210,7 +236,7 @@ def main():
 
   # Run top-level function (i.e. the appropriate task).
   tasks = """
-sign verify encrypt decrypt gpg_name key_details
+sign verify encrypt decrypt gpg_name key_details wrap unwrap
 """.split()
   if a.task not in tasks:
     msg = "Unrecognised task: {}".format(a.task)
@@ -290,6 +316,32 @@ def key_details(a):
       public_key = f.read()
       key_details = gpg.get_key_details(public_key, key_type='public')
       print(key_details)
+
+
+
+
+def wrap(a):
+  with open(a.private_key_file) as f:
+    private_key = f.read()
+  with open(a.public_key_file) as f:
+    public_key = f.read()
+  with open(a.data_file) as f:
+    data = f.read()
+  wrapped_data = gpg.wrap_data(private_key, public_key, data)
+  print(wrapped_data)
+
+
+
+
+def unwrap(a):
+  with open(a.private_key_file) as f:
+    private_key = f.read()
+  with open(a.public_key_file) as f:
+    public_key = f.read()
+  with open(a.wrapped_data_file) as f:
+    wrapped_data = f.read()
+  data = gpg.unwrap_data(private_key, public_key, wrapped_data)
+  print(data)
 
 
 
