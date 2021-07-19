@@ -210,11 +210,7 @@ def main():
 
   # Run top-level function (i.e. the appropriate task).
   tasks = """
-sign verify encrypt decrypt
-gpg_name
-test_sign_and_verify test_sign_and_verify_failure
-test_encrypt_and_decrypt test_encrypt_and_decrypt_failure
-key_details
+sign verify encrypt decrypt gpg_name key_details
 """.split()
   if a.task not in tasks:
     msg = "Unrecognised task: {}".format(a.task)
@@ -279,90 +275,6 @@ def decrypt(a):
 def gpg_name(a):
   gpg_cmd_name = gpg.get_available_gpg_command()
   print(gpg_cmd_name)
-
-
-
-
-def test_sign_and_verify(a):
-  data = "hello world\n"
-  log("data = " + data.strip())
-  private_key_file = 'stateless_gpg/data/test_key_1_private_key.txt'
-  with open(private_key_file) as f:
-    private_key = f.read()
-  signature = gpg.make_signature(private_key, data)
-  public_key_file = 'stateless_gpg/data/test_key_1_public_key.txt'
-  with open(public_key_file) as f:
-    public_key = f.read()
-  result = gpg.verify_signature(public_key, data, signature)
-  log("result = " + str(result))
-  if not result:
-    raise Exception("Failed to create and verify signature.")
-  print("Signature created and verified. Signature was not saved to a file.")
-
-
-
-
-def test_sign_and_verify_failure(a):
-  # Create a signature.
-  data = "hello world\n"
-  log("data = " + data.strip())
-  private_key_file = 'stateless_gpg/data/test_key_1_private_key.txt'
-  with open(private_key_file) as f:
-    private_key = f.read()
-  signature = gpg.make_signature(private_key, data)
-  # Verify the signature using the wrong key.
-  public_key_file = 'stateless_gpg/data/morgan_industries_public_key.txt'
-  with open(public_key_file) as f:
-    public_key = f.read()
-  result = gpg.verify_signature(public_key, data, signature)
-  log("result = " + str(result))
-  if not result:
-    raise Exception("Failed to create and verify signature.")
-  print("Signature created and verified. Signature was not saved to a file.")
-
-
-
-
-def test_encrypt_and_decrypt(a):
-  # Encrypt some data.
-  data = "hello world\n"
-  log("data = " + data.strip())
-  public_key_file = 'stateless_gpg/data/test_key_1_public_key.txt'
-  with open(public_key_file) as f:
-    public_key = f.read()
-  ciphertext = gpg.encrypt_data(public_key, data)
-  # Decrypt the data.
-  private_key_file = 'stateless_gpg/data/test_key_1_private_key.txt'
-  with open(private_key_file) as f:
-    private_key = f.read()
-  plaintext = gpg.decrypt_data(private_key, ciphertext)
-  log("plaintext = " + plaintext.strip())
-  success = plaintext == data
-  if not success:
-    raise Exception("Failed to encrypt and decrypt data.")
-  print("Data encrypted and decrypted. Ciphertext was not saved to a file.")
-
-
-
-
-def test_encrypt_and_decrypt_failure(a):
-  # Encrypt some data.
-  data = "hello world\n"
-  log("data = " + data.strip())
-  public_key_file = 'stateless_gpg/data/test_key_1_public_key.txt'
-  with open(public_key_file) as f:
-    public_key = f.read()
-  ciphertext = gpg.encrypt_data(public_key, data)
-  # Decrypt the data using the wrong key.
-  private_key_file = 'stateless_gpg/data/morgan_industries_private_key.txt'
-  with open(private_key_file) as f:
-    private_key = f.read()
-  plaintext = gpg.decrypt_data(private_key, ciphertext)
-  log("plaintext = " + str(plaintext))
-  success = plaintext == data
-  if not success:
-    raise Exception("Failed to encrypt and decrypt data.")
-  print("Data encrypted and decrypted. Ciphertext was not saved to a file.")
 
 
 
