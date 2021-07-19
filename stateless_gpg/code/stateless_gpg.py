@@ -273,14 +273,14 @@ class gpg(object):
       log("GPG failed to decrypt ciphertext.")
       log("decrypt_cmd: {}".format(decrypt_cmd))
       log("output: {}".format(output))
-      return None
-    with open(plaintext_file) as f:
-      plaintext = f.read()
+      plaintext = None
+    else:
+      with open(plaintext_file) as f:
+        plaintext = f.read()
     shutil.rmtree(gpg_dir_name)
     shutil.rmtree(data_dir_name)
     log("GPG ciphertext decrypted.")
     return plaintext
-
 
 
   @staticmethod
