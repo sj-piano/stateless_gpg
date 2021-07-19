@@ -329,6 +329,45 @@ class gpg(object):
     return output
 
 
+  @staticmethod
+  def wrap_data(sender_private_key, receiver_public_key, data):
+    # We sign the data with the private key of the sender.
+    # Then we encrypt it to the public key of the recipient.
+    signature = gpg.make_signature(sender_private_key, data)
+    # We append the signature to the data.
+    # Note: We don't use clearsign, because clearsign may alter the plaintext.
+    signed_data = data + '\n' + signature
+    wrapped_data = gpg.encrypt_data(receiver_public_key, signed_data)
+    return wrapped_data
+
+
+  @staticmethod
+  def unwrap_data(receiver_private_key, sender_public_key, wrapped_data):
+    # We unencrypt the data using the private key of the receiver.
+    # Then we verify the signature of the data using the public key of the sender.
+    signed_data = gpg.decrypt_data(receiver_private_key, wrapped_data)
+    # From signed_data, extract data and signature.
+    # Proceed through the output lines in reverse.
+    lines = signed_data.splitlines()
+    start_line_reverse_index = None
+    for i, line in enumerate(reversed(lines)):
+      if i == 0:
+        if line != '-----END PGP SIGNATURE-----':
+          raise ValueError
+      if line == '-----BEGIN PGP SIGNATURE-----':
+        start_line_reverse_index = i
+        break
+    if start_line_reverse_index is None:
+      raise ValueError
+    start_line_index = (len(lines) - 1) - start_line_reverse_index
+    data_lines = lines[:start_line_index]
+    signature_lines = lines[start_line_index:]
+    data = '\n'.join(data_lines)
+    signature = '\n'.join(signature_lines)
+    result = gpg.verify_signature(sender_public_key, data, signature)
+    return data
+
+
 
 
 def create_temp_directory():
