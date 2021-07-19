@@ -281,6 +281,37 @@ class gpg(object):
 
 
 
+  @staticmethod
+  def get_key_details(key, key_type='public'):
+    if key_type not in 'private public'.split():
+      raise ValueError
+    gpg_cmd_name = gpg.get_available_gpg_command()
+    gpg_dir_name = create_temp_directory()
+    data_dir_name = create_temp_directory()
+    key_file = join(data_dir_name, 'key.txt')
+    with open(key_file, 'w') as f:
+      f.write(key)
+    permissions_cmd = 'chmod 700 {g}'.format(g=gpg_dir_name)
+    run_local_cmd(permissions_cmd)
+    # Import key into tmp keyring.
+    import_cmd = '{n} --no-default-keyring --homedir {g} --import {k} 2>&1'
+    import_cmd = import_cmd.format(n=gpg_cmd_name, g=gpg_dir_name, k=key_file)
+    run_local_cmd(import_cmd)
+    # Load fingerprint of key.
+    display_cmd = '{n} --no-default-keyring --homedir {g} --keyid-format long --fingerprint'
+    if key_type == 'private':
+      display_cmd += ' --list-secret-keys'
+    if key_type == 'public':
+      display_cmd += ' --list-keys'
+    display_cmd = display_cmd.format(n=gpg_cmd_name, g=gpg_dir_name)
+    output, exit_code = run_local_cmd(display_cmd)
+    shutil.rmtree(gpg_dir_name)
+    shutil.rmtree(data_dir_name)
+    log("GPG key details retrieved.")
+    return output
+
+
+
 
 def create_temp_directory():
   # Start the directory name with a dot so that it's hidden.
