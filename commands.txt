@@ -10,6 +10,7 @@ python3 cli.py --logLevel=info --task sign --privateKeyFile stateless_gpg/data/t
 python3 cli.py --logLevel=info --task verify --publicKeyFile stateless_gpg/data/test_key_1_public_key.txt --dataFile stateless_gpg/data/data1.txt --signatureFile stateless_gpg/data/data1_signature_by_test_key_1.txt
 
 
+[demonstrates a failure]
 python3 cli.py --logLevel=info --task verify --publicKeyFile stateless_gpg/data/test_key_1_public_key.txt --dataFile stateless_gpg/data/data1.txt --signatureFile stateless_gpg/data/data1_invalid_signature_by_test_key_1_swapped_bytes.txt
 
 
@@ -20,6 +21,12 @@ python3 cli.py --logLevel=info --task decrypt --privateKeyFile stateless_gpg/dat
 
 
 python3 cli.py -t key_details --privateKeyFile stateless_gpg/data/test_key_1_private_key.txt --publicKeyFile stateless_gpg/data/test_key_1_public_key.txt
+
+
+python3 cli.py --logLevel=info --task wrap --privateKeyFile stateless_gpg/data/test_key_1_private_key.txt --publicKeyFile stateless_gpg/data/morgan_industries_public_key.txt --dataFile stateless_gpg/data/data1.txt
+
+
+python3 cli.py --logLevel=info --task unwrap --privateKeyFile stateless_gpg/data/morgan_industries_private_key.txt --publicKeyFile stateless_gpg/data/test_key_1_public_key.txt --wrappedDataFile stateless_gpg/data/wrapped_data_from_test_key_1_to_morgan_industries.txt
 
 
 
