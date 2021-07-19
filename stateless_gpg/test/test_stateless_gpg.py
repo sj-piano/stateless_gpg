@@ -33,12 +33,12 @@ def setup_module(pytestconfig):
 # - Running the command { pytest3 stateless_gpg/test/test_stateless_gpg.py }
 # in the package directory should load and run the tests in this file.
 # - Run a specific test:
-# -- pytest3 stateless_gpg/test/test_stateless_gpg.py::test_sign_and_verify
+# -- pytest3 stateless_gpg/test/test_stateless_gpg.py::test_verify
 # - Run quietly:
 # -- [all tests] pytest3 -q
 # -- pytest3 -q stateless_gpg/test/test_stateless_gpg.py
 # - Print log output in real-time during a single test:
-# -- pytest3 -s --log-cli-level=INFO stateless_gpg/test/test_stateless_gpg.py::test_sign_and_verify
+# -- pytest3 -s --log-cli-level=INFO stateless_gpg/test/test_stateless_gpg.py::test_verify
 # --- Note the use of the pytest -s option. This will cause print statements in the test code itself to also produce output.
 
 
@@ -58,7 +58,6 @@ def test_sign_and_verify():
   result = gpg.verify_signature(public_key, data, signature)
   assert result is True
   print("Signature created and verified.")
-
 
 
 
