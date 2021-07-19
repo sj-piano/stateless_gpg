@@ -176,6 +176,8 @@ class gpg(object):
       log("GPG signature verified.")
     else:
       log("Invalid GPG signature.")
+      log("verify_cmd: {}".format(verify_cmd))
+      log("output: {}".format(output))
     return success
 
 
