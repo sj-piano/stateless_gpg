@@ -265,13 +265,11 @@ def verify(a):
     data = f.read()
   with open(a.signature_file) as f:
     signature = f.read()
-  result = gpg.verify_signature(public_key, data, signature)
+  result = gpg.signature_is_valid(public_key, data, signature)
   if result:
     print("Signature is valid.")
-    sys.exit(0)
   else:
     print("Signature is not valid.")
-    sys.exit(1)
 
 
 
