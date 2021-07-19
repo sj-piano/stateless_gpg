@@ -33,35 +33,38 @@ def setup_module(pytestconfig):
 # - Running the command { pytest3 stateless_gpg/test/test_stateless_gpg.py }
 # in the package directory should load and run the tests in this file.
 # - Run a specific test:
-# -- pytest3 stateless_gpg/test/test_stateless_gpg.py::test_hello_world
+# -- pytest3 stateless_gpg/test/test_stateless_gpg.py::test_sign_and_verify
 # - Run quietly:
 # -- [all tests] pytest3 -q
 # -- pytest3 -q stateless_gpg/test/test_stateless_gpg.py
 # - Print log output in real-time during a single test:
-# -- pytest3 -s --log-cli-level=INFO stateless_gpg/test/test_stateless_gpg.py::test_hello_world
+# -- pytest3 -s --log-cli-level=INFO stateless_gpg/test/test_stateless_gpg.py::test_sign_and_verify
 # --- Note the use of the pytest -s option. This will cause print statements in the test code itself to also produce output.
 
 
 
 
-def test_hello_world():
-  data = "hello world\n"
+def test_sign_and_verify():
+  # Create signature.
+  data_file = '../data/data1.txt'
+  data = pkgutil.get_data(__name__, data_file).decode('ascii')
   print("data = " + data.strip())
   private_key_file = '../data/test_key_1_private_key.txt'
-  private_key_bytes = pkgutil.get_data(__name__, private_key_file)
-  private_key = private_key_bytes.decode('ascii')
+  private_key = pkgutil.get_data(__name__, private_key_file).decode('ascii')
   signature = gpg.make_signature(private_key, data)
+  # Verify signature.
   public_key_file = '../data/test_key_1_public_key.txt'
-  public_key_bytes = pkgutil.get_data(__name__, public_key_file)
-  public_key = public_key_bytes.decode('ascii')
+  public_key = pkgutil.get_data(__name__, public_key_file).decode('ascii')
   result = gpg.verify_signature(public_key, data, signature)
-  print("result = " + str(result))
   assert result is True
+  print("Signature created and verified.")
 
 
 
 
-def test_hello_world_signature_only():
+
+def test_verify():
+  # Verify signature.
   data_file = '../data/data1.txt'
   data = pkgutil.get_data(__name__, data_file).decode('ascii')
   print("data = " + data.strip())
@@ -70,5 +73,14 @@ def test_hello_world_signature_only():
   public_key_file = '../data/test_key_1_public_key.txt'
   public_key = pkgutil.get_data(__name__, public_key_file).decode('ascii')
   result = gpg.verify_signature(public_key, data, signature)
-  print("result = " + str(result))
   assert result is True
+  print("Signature verified.")
+
+
+
+
+
+
+
+
+
