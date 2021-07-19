@@ -10,6 +10,9 @@ python3 cli.py --logLevel=info --task sign --privateKeyFile stateless_gpg/data/t
 python3 cli.py --logLevel=info --task verify --publicKeyFile stateless_gpg/data/test_key_1_public_key.txt --dataFile stateless_gpg/data/data1.txt --signatureFile stateless_gpg/data/data1_signature_by_test_key_1.txt
 
 
+python3 cli.py --logLevel=info --task verify --publicKeyFile stateless_gpg/data/test_key_1_public_key.txt --dataFile stateless_gpg/data/data1.txt --signatureFile stateless_gpg/data/data1_invalid_signature_by_test_key_1_swapped_bytes.txt
+
+
 python3 cli.py --logLevel=info --task encrypt --publicKeyFile stateless_gpg/data/test_key_1_public_key.txt --dataFile stateless_gpg/data/data1.txt
 
 
