@@ -175,10 +175,22 @@ class gpg(object):
     if success:
       log("GPG signature verified.")
     else:
-      log("GPG failed to verify signature.")
-      log("verify_cmd: {}".format(verify_cmd))
-      log("output: {}".format(output))
+      msg = "GPG failed to verify signature."
+      msg += "\n- verify_cmd: {}".format(verify_cmd)
+      msg += "\n- output: {}".format(output)
+      raise ValueError(msg)
     return success
+
+
+  # Utility method that returns a boolean.
+  @staticmethod
+  def signature_is_valid(public_key, data, signature):
+    try:
+      gpg.verify_signature(public_key, data, signature)
+    except Exception as e:
+      logger.error(str(e))
+      return False
+    return True
 
 
   @staticmethod
@@ -220,7 +232,12 @@ class gpg(object):
     # Note: "--trust-model always" allows the "--yes" option to work properly.
     encrypt_cmd = '{n} --no-default-keyring --homedir {g} --keyid-format long --output {c} --armor --recipient {f} --yes --trust-model always --encrypt {d}'
     encrypt_cmd = encrypt_cmd.format(n=gpg_cmd_name, g=gpg_dir_name, f=fingerprint, c=ciphertext_file, d=data_file)
-    run_local_cmd(encrypt_cmd)
+    output, exit_code = run_local_cmd(encrypt_cmd)
+    if exit_code != 0:
+      msg = "Problem encountered while encrypting data."
+      msg += "\n- encrypt_cmd: {}".format(encrypt_cmd)
+      msg += "\n- output: {}".format(output)
+      raise ValueError(msg)
     with open(ciphertext_file) as f:
       ciphertext = f.read()
     shutil.rmtree(gpg_dir_name)
@@ -270,13 +287,12 @@ class gpg(object):
         success = True
         break
     if not success:
-      log("GPG failed to decrypt ciphertext.")
-      log("decrypt_cmd: {}".format(decrypt_cmd))
-      log("output: {}".format(output))
-      plaintext = None
-    else:
-      with open(plaintext_file) as f:
-        plaintext = f.read()
+      msg = "GPG failed to decrypt ciphertext."
+      msg += "\n- decrypt_cmd: {}".format(decrypt_cmd)
+      msg += "\n- output: {}".format(output)
+      raise ValueError(msg)
+    with open(plaintext_file) as f:
+      plaintext = f.read()
     shutil.rmtree(gpg_dir_name)
     shutil.rmtree(data_dir_name)
     log("GPG ciphertext decrypted.")
