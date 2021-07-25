@@ -236,7 +236,7 @@ def main():
 
   # Run top-level function (i.e. the appropriate task).
   tasks = """
-sign verify encrypt decrypt gpg_name key_details wrap unwrap
+sign verify encrypt decrypt key_details wrap unwrap
 """.split()
   if a.task not in tasks:
     msg = "Unrecognised task: {}".format(a.task)
@@ -292,13 +292,6 @@ def decrypt(a):
     ciphertext = f.read()
   data = gpg.decrypt_data(private_key, ciphertext)
   print(data, end='')
-
-
-
-
-def gpg_name(a):
-  gpg_cmd_name = gpg.get_available_gpg_command()
-  print(gpg_cmd_name)
 
 
 

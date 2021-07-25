@@ -69,8 +69,9 @@ class gpg(object):
     pass
 
 
+  # not used.
   @staticmethod
-  def get_available_gpg_command():
+  def get_available_gpg_command_old_version():
     # We want the bash command that calls GPG 1.4.x.
     # (Not GPG 2.x)
     gpg_cmd_names = 'gpg gpgv1'.split()
@@ -91,6 +92,13 @@ class gpg(object):
     msg = "Tried each bash command in this list: {}".format(gpg_cmd_names)
     msg += ". None of them lead to GPG 1.4.x."
     raise ValueError(msg)
+
+
+  @staticmethod
+  def get_available_gpg_command():
+    # Update: Everything appears to work fine with GPG 2.x.
+    # Future: Create keys with GPG 2, see if everything still works.
+    return 'gpg'
 
 
   @staticmethod
