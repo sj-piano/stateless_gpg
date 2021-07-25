@@ -349,11 +349,8 @@ class gpg(object):
 
 
   @staticmethod
-  def unwrap_data(receiver_private_key, sender_public_key, wrapped_data):
-    # We unencrypt the data using the private key of the receiver.
-    # Then we verify the signature of the data using the public key of the sender.
-    signed_data = gpg.decrypt_data(receiver_private_key, wrapped_data)
-    # From signed_data, extract data and signature.
+  def get_unwrapped_data_and_signature(signed_data):
+    # From the signed_data that was previously wrapped, extract data and signature.
     # Proceed through the output lines in reverse.
     lines = signed_data.splitlines()
     start_line_reverse_index = None
@@ -371,8 +368,19 @@ class gpg(object):
     signature_lines = lines[start_line_index:]
     data = '\n'.join(data_lines)
     signature = '\n'.join(signature_lines)
-    result = gpg.verify_signature(sender_public_key, data, signature)
+    return data, signature
+
+
+  @staticmethod
+  def unwrap_data(receiver_private_key, sender_public_key, wrapped_data):
+    # We unencrypt the data using the private key of the receiver.
+    signed_data = gpg.decrypt_data(receiver_private_key, wrapped_data)
+    # We verify the signature of the data using the public key of the sender.
+    data, signature = gpg.get_unwrapped_data_and_signature(signed_data)
+    gpg.verify_signature(sender_public_key, data, signature)
     return data
+
+
 
 
 
