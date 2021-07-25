@@ -253,7 +253,7 @@ def sign(a):
   with open(a.data_file) as f:
     data = f.read()
   signature = gpg.make_signature(private_key, data)
-  print(signature)
+  print(signature, end='')
 
 
 
@@ -280,7 +280,7 @@ def encrypt(a):
   with open(a.data_file) as f:
     data = f.read()
   ciphertext = gpg.encrypt_data(public_key, data)
-  print(ciphertext)
+  print(ciphertext, end='')
 
 
 
@@ -291,7 +291,7 @@ def decrypt(a):
   with open(a.ciphertext_file) as f:
     ciphertext = f.read()
   data = gpg.decrypt_data(private_key, ciphertext)
-  print(data)
+  print(data, end='')
 
 
 
@@ -313,7 +313,7 @@ def key_details(a):
     with open(a.public_key_file) as f:
       public_key = f.read()
       key_details = gpg.get_key_details(public_key, key_type='public')
-      print(key_details)
+      print(key_details, end='')
 
 
 
@@ -326,7 +326,7 @@ def wrap(a):
   with open(a.data_file) as f:
     data = f.read()
   wrapped_data = gpg.wrap_data(private_key, public_key, data)
-  print(wrapped_data)
+  print(wrapped_data, end='')
 
 
 
@@ -339,7 +339,7 @@ def unwrap(a):
   with open(a.wrapped_data_file) as f:
     wrapped_data = f.read()
   data = gpg.unwrap_data(private_key, public_key, wrapped_data)
-  print(data)
+  print(data, end='')
 
 
 
