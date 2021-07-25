@@ -196,7 +196,6 @@ class gpg(object):
     try:
       gpg.verify_signature(public_key, data, signature)
     except Exception as e:
-      logger.error(str(e))
       return False
     return True
 
