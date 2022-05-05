@@ -24,7 +24,7 @@ isdir = os.path.isdir
 def cleanup():
   # This function deletes any directory that starts with ".stateless_gpg".
   # These directories are created, but not deleted, when we test for a failure.
-  dirs = [x for x in os.listdir() if isdir(x)]
+  dirs = [x for x in os.listdir('.') if isdir(x)]
   for d in dirs:
     if d.startswith('.stateless_gpg'):
       shutil.rmtree(d)
