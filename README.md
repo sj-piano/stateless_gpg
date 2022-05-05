@@ -12,7 +12,7 @@ http://edgecase.net/articles/gpg_1_4_10_stateless_operations
 
 ## Requirements
 
-Python 3.5.2
+Python 3.5.2 (with pip3)
 
 Pytest 6.1.2
 
@@ -68,7 +68,7 @@ git clone git@github.com:sj-piano/stateless_gpg.git
 
 cd stateless_gpg
 
-pip install --requirement requirements.txt
+pip3 install --requirement requirements.txt
 ```
 
 
@@ -76,16 +76,14 @@ pip install --requirement requirements.txt
 
 ## Testing
 
-Tested using pytest 4.6.11 under Python 2.7.
-
 ```bash
 cd stateless_gpg
 
 # Basic
-pytest
+pytest3
 
 # Detailed output
-pytest --override-ini log_cli=true
+pytest3 --override-ini log_cli=true
 ```
 
 
