@@ -1,0 +1,15 @@
+
+
+More logging.
+
+
+Better parsing of GPG's error output, allowing better error messages.
+
+
+README:
+- Explanation of available operations: sign, encrypt, etc.
+- Explanation of CLI use.
+- Explanation of wrap and unwrap operations.
+
+
+
