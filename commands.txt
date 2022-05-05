@@ -20,7 +20,7 @@ python3 cli.py --logLevel=info --task encrypt --publicKeyFile stateless_gpg/data
 python3 cli.py --logLevel=info --task decrypt --privateKeyFile stateless_gpg/data/test_key_1_private_key.txt --ciphertextFile stateless_gpg/data/data1_encrypted_to_test_key_1.txt
 
 
-python3 cli.py -t key_details --privateKeyFile stateless_gpg/data/test_key_1_private_key.txt --publicKeyFile stateless_gpg/data/test_key_1_public_key.txt
+python3 cli.py --task key_details --privateKeyFile stateless_gpg/data/test_key_1_private_key.txt --publicKeyFile stateless_gpg/data/test_key_1_public_key.txt
 
 
 python3 cli.py --logLevel=info --task wrap --privateKeyFile stateless_gpg/data/test_key_1_private_key.txt --publicKeyFile stateless_gpg/data/morgan_industries_public_key.txt --dataFile stateless_gpg/data/data1.txt
