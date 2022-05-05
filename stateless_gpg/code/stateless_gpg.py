@@ -233,8 +233,10 @@ class gpg(object):
     for line in output.splitlines():
       if 'Key fingerprint' in line:
         fingerprint = line.split(' = ')[1].replace(' ', '')
+        break
     if not fingerprint:
-      raise ValueError
+      msg = "Could not retrieve fingerprint of public key."
+      raise ValueError(msg)
     # Encrypt the data, using the fingerprint to specify the recipient.
     # Note: "--trust-model always" allows the "--yes" option to work properly.
     encrypt_cmd = '{n} --no-default-keyring --homedir {g} --keyid-format long --output {c} --armor --recipient {f} --yes --trust-model always --encrypt {d}'
@@ -309,7 +311,8 @@ class gpg(object):
   @staticmethod
   def get_key_details(key, key_type='public'):
     if key_type not in 'private public'.split():
-      raise ValueError
+      msg = "Unrecognised key type: {}".format(key_type)
+      raise ValueError(msg)
     gpg_cmd_name = gpg.get_available_gpg_command()
     gpg_dir_name = create_temp_directory()
     data_dir_name = create_temp_directory()
@@ -354,15 +357,20 @@ class gpg(object):
     # Proceed through the output lines in reverse.
     lines = signed_data.splitlines()
     start_line_reverse_index = None
+    start_line = '-----BEGIN PGP SIGNATURE-----'
+    end_line = '-----END PGP SIGNATURE-----'
     for i, line in enumerate(reversed(lines)):
       if i == 0:
-        if line != '-----END PGP SIGNATURE-----':
-          raise ValueError
-      if line == '-----BEGIN PGP SIGNATURE-----':
+        if line != end_line:
+          msg = "Last line of signature is not the expected end line: '{}'".format(end_line)
+          msg += '\nInstead, it is: {}'.format(line)
+          raise ValueError(msg)
+      if line == start_line:
         start_line_reverse_index = i
         break
     if start_line_reverse_index is None:
-      raise ValueError
+      msg = "Signature start line not found. Expected to find '{}'".format(start_line)
+      raise ValueError(msg)
     start_line_index = (len(lines) - 1) - start_line_reverse_index
     data_lines = lines[:start_line_index]
     signature_lines = lines[start_line_index:]
